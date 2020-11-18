@@ -1,4 +1,5 @@
 const gameGrid = document.querySelector('.game-grid')
+const gameGridStopped = document.querySelector('.game-grid-stopped')
 const startBtn = document.getElementById('start')
 const scoring = document.getElementById('score')
 const finalScore = document.querySelector('.finalScore')
@@ -27,13 +28,15 @@ createGrid()
 currentSnake.forEach(index => squares[index].classList.add('snake'))
 
 function startGame () {
+    document.addEventListener('keydown', control)
     currentSnake.forEach(index => squares[index].classList.remove('snake'))
     scoring.classList.remove('finalScore')
+    gameGrid.classList.remove('game-grid-stopped')
     squares[appleIndex].classList.remove('apple')
     clearInterval(timerId)
     currentSnake = [2, 1, 0]
     score = 0
-    intervalTime = 1000
+    intervalTime = 500
     direction = 1
     scoring.textContent = score
     generateApples()
@@ -51,10 +54,13 @@ function move() {
         (currentSnake[0] - width < 0 && direction === -width) ||
         squares[currentSnake[0] + direction].classList.contains('snake')
     ){
+        document.removeEventListener('keydown', control)
         scoring.classList.add('finalScore')
+        gameGrid.classList.add('game-grid-stopped')
         scoring.textContent = "Your Final Score was: " + score + "!"
         finalScore.style.transform = "translateX('0')"
         return clearInterval(timerId)
+
     }
     const tail = currentSnake.pop()
     const head = currentSnake.unshift(currentSnake[0] + direction)
